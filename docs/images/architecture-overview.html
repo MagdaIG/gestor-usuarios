@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura del Sistema - Gestor de Usuarios</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .architecture-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .title {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .layers {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .layer {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .layer:hover {
+            transform: translateY(-3px);
+        }
+
+        .layer-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .presentation-layer {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .business-layer {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .data-layer {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .component {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .component:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .component-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .component-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .tech-stack {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+        }
+
+        .tech-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+
+        .tech-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .tech-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .tech-item:hover {
+            transform: scale(1.05);
+        }
+
+        .tech-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .tech-purpose {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+
+        .flow-diagram {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+        }
+
+        .flow-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.4rem;
+        }
+
+        .flow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .flow-step {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .step-description {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .flow-step::after {
+                display: none;
+            }
+
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="architecture-container">
+        <h1 class="title">Arquitectura del Sistema</h1>
+        <p class="subtitle">Gestor de Usuarios y Roles - Arquitectura en Capas</p>
+
+        <div class="layers">
+            <!-- Capa de Presentación -->
+            <div class="layer">
+                <div class="layer-title presentation-layer">Capa de Presentación (Frontend)</div>
+                <div class="components-grid">
+                    <div class="component">
+                        <div class="component-title">HTML5</div>
+                        <div class="component-description">Estructura semántica y accesible de las páginas web</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">CSS3 + Bootstrap 5</div>
+                        <div class="component-description">Estilos responsivos y componentes UI modernos</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">JavaScript Vanilla</div>
+                        <div class="component-description">Lógica del cliente, validaciones y comunicación con API</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">Fetch API</div>
+                        <div class="component-description">Comunicación asíncrona con el backend</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Capa de Negocio -->
+            <div class="layer">
+                <div class="layer-title business-layer">Capa de Negocio (Backend)</div>
+                <div class="components-grid">
+                    <div class="component">
+                        <div class="component-title">Node.js + Express</div>
+                        <div class="component-description">Servidor web y framework para APIs REST</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">Controladores</div>
+                        <div class="component-description">Lógica de negocio y manejo de peticiones HTTP</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">Servicios</div>
+                        <div class="component-description">Transacciones complejas y operaciones atómicas</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">Middleware</div>
+                        <div class="component-description">Validaciones, manejo de errores y autenticación</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">Joi Validation</div>
+                        <div class="component-description">Validación robusta de datos de entrada</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">bcryptjs</div>
+                        <div class="component-description">Hash seguro de contraseñas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Capa de Datos -->
+            <div class="layer">
+                <div class="layer-title data-layer">Capa de Datos</div>
+                <div class="components-grid">
+                    <div class="component">
+                        <div class="component-title">Sequelize ORM</div>
+                        <div class="component-description">Mapeo objeto-relacional y consultas SQL</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">PostgreSQL</div>
+                        <div class="component-description">Base de datos principal (producción)</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">SQLite</div>
+                        <div class="component-description">Base de datos de desarrollo y testing</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">Migraciones</div>
+                        <div class="component-description">Control de versiones del esquema de BD</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-title">Seeders</div>
+                        <div class="component-description">Datos iniciales y de prueba</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <div class="tech-title">Stack Tecnológico</div>
+            <div class="tech-items">
+                <div class="tech-item">
+                    <div class="tech-name">Node.js</div>
+                    <div class="tech-purpose">Runtime JavaScript</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">Express.js</div>
+                    <div class="tech-purpose">Framework Web</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">Sequelize</div>
+                    <div class="tech-purpose">ORM</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">PostgreSQL</div>
+                    <div class="tech-purpose">Base de Datos</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">Bootstrap 5</div>
+                    <div class="tech-purpose">Framework CSS</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">Joi</div>
+                    <div class="tech-purpose">Validación</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">bcryptjs</div>
+                    <div class="tech-purpose">Encriptación</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">dotenv</div>
+                    <div class="tech-purpose">Variables de Entorno</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flow-diagram">
+            <div class="flow-title">Flujo de Datos</div>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Frontend</div>
+                    <div class="step-description">Usuario interactúa con la interfaz</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">API Request</div>
+                    <div class="step-description">Fetch API envía petición HTTP</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Middleware</div>
+                    <div class="step-description">Validación y procesamiento</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Controller</div>
+                    <div class="step-description">Lógica de negocio</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Service</div>
+                    <div class="step-description">Transacciones complejas</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Sequelize</div>
+                    <div class="step-description">ORM procesa consultas</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">7</div>
+                    <div class="step-title">Database</div>
+                    <div class="step-description">Almacenamiento persistente</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

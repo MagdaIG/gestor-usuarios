@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas del Sistema - Gestor de Usuarios</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .title {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .buttons-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .diagram-button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .diagram-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(52, 152, 219, 0.4);
+        }
+
+        .diagram-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .diagram-button:hover::before {
+            left: 100%;
+        }
+
+        .diagram-button.architecture {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            box-shadow: 0 8px 16px rgba(231, 76, 60, 0.3);
+        }
+
+        .diagram-button.architecture:hover {
+            box-shadow: 0 12px 24px rgba(231, 76, 60, 0.4);
+        }
+
+        .button-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .button-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .button-description {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+
+        .diagram-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .diagram-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .close-button:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .diagram-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        @media (max-width: 768px) {
+            .buttons-container {
+                grid-template-columns: 1fr;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Diagramas del Sistema</h1>
+        <p class="subtitle">Gestor de Usuarios y Roles</p>
+
+        <div class="buttons-container">
+            <button class="diagram-button" onclick="showDiagram('database')">
+                <span class="button-icon">🗄️</span>
+                <div class="button-title">Diagrama de Base de Datos</div>
+                <div class="button-description">
+                    Visualiza las tablas, relaciones y estructura de la base de datos del sistema
+                </div>
+            </button>
+
+            <button class="diagram-button architecture" onclick="showDiagram('architecture')">
+                <span class="button-icon">🏗️</span>
+                <div class="button-title">Arquitectura del Sistema</div>
+                <div class="button-description">
+                    Explora la arquitectura en capas, tecnologías y flujo de datos
+                </div>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Visor de diagramas -->
+    <div class="diagram-viewer" id="diagramViewer">
+        <div class="diagram-content">
+            <button class="close-button" onclick="hideDiagram()">×</button>
+            <iframe class="diagram-iframe" id="diagramFrame"></iframe>
+        </div>
+    </div>
+
+    <script>
+        function showDiagram(type) {
+            const viewer = document.getElementById('diagramViewer');
+            const frame = document.getElementById('diagramFrame');
+
+            if (type === 'database') {
+                frame.src = 'diagram-database.html';
+            } else if (type === 'architecture') {
+                frame.src = 'architecture-overview.html';
+            }
+
+            viewer.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideDiagram() {
+            const viewer = document.getElementById('diagramViewer');
+            const frame = document.getElementById('diagramFrame');
+
+            viewer.style.display = 'none';
+            frame.src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Cerrar con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideDiagram();
+            }
+        });
+
+        // Cerrar haciendo clic fuera del contenido
+        document.getElementById('diagramViewer').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideDiagram();
+            }
+        });
+    </script>
+</body>
+</html>

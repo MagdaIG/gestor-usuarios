@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de Base de Datos - Gestor de Usuarios</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .diagram-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .title {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .tables-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .table {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .table:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .table-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 10px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .field:last-child {
+            border-bottom: none;
+        }
+
+        .field-name {
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .field-type {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            background: #ecf0f1;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .primary-key {
+            color: #e74c3c;
+            font-weight: 700;
+        }
+
+        .foreign-key {
+            color: #f39c12;
+            font-weight: 600;
+        }
+
+        .unique {
+            color: #9b59b6;
+            font-weight: 600;
+        }
+
+        .relationships {
+            margin-top: 40px;
+        }
+
+        .relationship-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .relationship-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .relationship {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #3498db;
+        }
+
+        .relationship-type {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .relationship-description {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .one-to-one {
+            border-left-color: #e74c3c;
+        }
+
+        .one-to-many {
+            border-left-color: #f39c12;
+        }
+
+        .many-to-many {
+            border-left-color: #9b59b6;
+        }
+
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .legend-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .legend-items {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .pk-color { background: #e74c3c; }
+        .fk-color { background: #f39c12; }
+        .unique-color { background: #9b59b6; }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <h1 class="title">Diagrama de Base de Datos</h1>
+        <p class="subtitle">Sistema de Gestión de Usuarios y Roles</p>
+
+        <div class="tables-container">
+            <!-- Tabla Usuarios -->
+            <div class="table">
+                <div class="table-title">Usuarios</div>
+                <div class="field">
+                    <span class="field-name primary-key">id</span>
+                    <span class="field-type">UUID (PK)</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">nombre</span>
+                    <span class="field-type">VARCHAR(100)</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">correo</span>
+                    <span class="field-type unique">VARCHAR(150) UNIQUE</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">password</span>
+                    <span class="field-type">VARCHAR(255)</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">activo</span>
+                    <span class="field-type">BOOLEAN</span>
+                </div>
+                <div class="field">
+                    <span class="field-name foreign-key">rol_id</span>
+                    <span class="field-type">UUID (FK)</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">created_at</span>
+                    <span class="field-type">TIMESTAMP</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">updated_at</span>
+                    <span class="field-type">TIMESTAMP</span>
+                </div>
+            </div>
+
+            <!-- Tabla Roles -->
+            <div class="table">
+                <div class="table-title">Roles</div>
+                <div class="field">
+                    <span class="field-name primary-key">id</span>
+                    <span class="field-type">UUID (PK)</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">nombre</span>
+                    <span class="field-type unique">VARCHAR(50) UNIQUE</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">descripcion</span>
+                    <span class="field-type">TEXT</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">activo</span>
+                    <span class="field-type">BOOLEAN</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">created_at</span>
+                    <span class="field-type">TIMESTAMP</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">updated_at</span>
+                    <span class="field-type">TIMESTAMP</span>
+                </div>
+            </div>
+
+            <!-- Tabla UserProfiles -->
+            <div class="table">
+                <div class="table-title">UserProfiles</div>
+                <div class="field">
+                    <span class="field-name primary-key">id</span>
+                    <span class="field-type">UUID (PK)</span>
+                </div>
+                <div class="field">
+                    <span class="field-name foreign-key">userId</span>
+                    <span class="field-type unique">UUID (FK) UNIQUE</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">bio</span>
+                    <span class="field-type">TEXT</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">avatarUrl</span>
+                    <span class="field-type">VARCHAR(255)</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">created_at</span>
+                    <span class="field-type">TIMESTAMP</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">updated_at</span>
+                    <span class="field-type">TIMESTAMP</span>
+                </div>
+            </div>
+
+            <!-- Tabla UserRoles -->
+            <div class="table">
+                <div class="table-title">UserRoles</div>
+                <div class="field">
+                    <span class="field-name primary-key">id</span>
+                    <span class="field-type">UUID (PK)</span>
+                </div>
+                <div class="field">
+                    <span class="field-name foreign-key">userId</span>
+                    <span class="field-type">UUID (FK)</span>
+                </div>
+                <div class="field">
+                    <span class="field-name foreign-key">roleId</span>
+                    <span class="field-type">UUID (FK)</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">created_at</span>
+                    <span class="field-type">TIMESTAMP</span>
+                </div>
+                <div class="field">
+                    <span class="field-name">updated_at</span>
+                    <span class="field-type">TIMESTAMP</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="relationships">
+            <h2 class="relationship-title">Relaciones</h2>
+            <div class="relationship-list">
+                <div class="relationship one-to-many">
+                    <div class="relationship-type">1:N - Usuario → Rol</div>
+                    <div class="relationship-description">Un usuario tiene un rol principal (rol_id), un rol puede tener muchos usuarios</div>
+                </div>
+                <div class="relationship one-to-one">
+                    <div class="relationship-type">1:1 - Usuario ↔ UserProfile</div>
+                    <div class="relationship-description">Cada usuario puede tener un perfil extendido con información adicional</div>
+                </div>
+                <div class="relationship many-to-many">
+                    <div class="relationship-type">N:M - Usuario ↔ Rol</div>
+                    <div class="relationship-description">Un usuario puede tener múltiples roles, un rol puede ser asignado a varios usuarios (tabla UserRoles)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-title">Leyenda</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color pk-color"></div>
+                    <span>Clave Primaria (PK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color fk-color"></div>
+                    <span>Clave Foránea (FK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color unique-color"></div>
+                    <span>Campo Único</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

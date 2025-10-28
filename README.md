@@ -11,7 +11,26 @@ Lo que hace especial a este proyecto es que implementa los tres tipos principale
 
 Además, uso transacciones para asegurar que todas las operaciones complejas (como crear un usuario con perfil y roles múltiples) se ejecuten de manera atómica, manteniendo la integridad de los datos.
 
+### Capturas de Pantalla
+
+![Dashboard](docs/images/screenshot-dashboard.png)
+*Dashboard principal con estadísticas del sistema*
+
+![Lista de Usuarios](docs/images/screenshot-users-list.png)
+*Gestión de usuarios con búsqueda, filtros y paginación*
+
+![Formulario de Usuario](docs/images/screenshot-user-form.png)
+*Formulario completo para crear/editar usuarios con perfil y roles*
+
+![Gestión de Roles](docs/images/screenshot-roles.png)
+*Interfaz para administrar roles del sistema*
+
 ## Tecnologías Utilizadas
+
+### Arquitectura del Sistema
+
+![Arquitectura del Sistema](docs/images/architecture-overview.png)
+*Arquitectura en capas del sistema completo*
 
 ### Backend
 - **Node.js** - Runtime de JavaScript
@@ -168,6 +187,11 @@ Te explico los endpoints disponibles:
 ## Relaciones y Transacciones
 
 Te explico cómo funcionan las relaciones y por qué uso transacciones:
+
+### Diagrama de Base de Datos
+
+![Diagrama de Base de Datos](docs/images/diagram-database.png)
+*Estructura completa de la base de datos con todas las relaciones*
 
 ### Relación 1:1 (Usuario ↔ Perfil)
 Cada usuario puede tener un perfil personalizado con información adicional como biografía y avatar. Uso esta relación para demostrar cómo manejar datos opcionales de manera eficiente.
